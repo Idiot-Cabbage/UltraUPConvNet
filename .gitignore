@@ -1,4 +1,7 @@
 exp_out/
+!exp_out/note.txt
 __pycache__/
 pretrained_ckpt/
+!pretrained_ckpt/note.txt
 data/
+!data/note.txt
