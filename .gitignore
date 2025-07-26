@@ -5,3 +5,4 @@ pretrained_ckpt/
 !pretrained_ckpt/note.txt
 data/
 !data/note.txt
+*.tar.gz

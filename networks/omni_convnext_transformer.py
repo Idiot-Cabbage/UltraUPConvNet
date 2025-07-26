@@ -11,23 +11,23 @@ class OmniVisionConvNeXt(nn.Module):
         self.prompt = prompt
         # ConvNeXt backbone
         if args.use_pretrained_model:
-            #self.backbone = convnext_base(pretrained=False, num_classes=1000)
-            self.backbone = convnext_tiny(pretrained=False, num_classes=1000)
+            self.backbone = convnext_base(pretrained=False, num_classes=1000)
+            #self.backbone = convnext_tiny(pretrained=False, num_classes=1000)
             checkpoint = torch.load(args.pretrained_path, map_location='cpu')
             state_dict = checkpoint["model"] if "model" in checkpoint else checkpoint
             self.backbone.load_state_dict(state_dict, strict=False)
         else:
-            #self.backbone = convnext_base(pretrained=False, num_classes=1000)
-            self.backbone = convnext_tiny(pretrained=False, num_classes=1000)
+            self.backbone = convnext_base(pretrained=False, num_classes=1000)
+            #self.backbone = convnext_tiny(pretrained=False, num_classes=1000)
             print("No pretrained weights provided for ConvNeXt.")
         
-        embed_dim = 768  # ConvNeXt classification 最后一层维度
+        embed_dim = 1024  # ConvNeXt classification 最后一层维度
         self.dec_prompt_mlp = nn.Linear(15, embed_dim) if prompt else None
         self.prompt_proj_layers = nn.ModuleList([
-            nn.Linear(15, 96),
-            nn.Linear(15, 192),
-            nn.Linear(15, 384),
-            nn.Linear(15, 768),
+            nn.Linear(15, 128),
+            nn.Linear(15, 256),
+            nn.Linear(15, 512),
+            nn.Linear(15, 1024),
         ]) if prompt else None
         # self.prompt_layers = nn.ModuleList([
         #     nn.Linear(15, embed_dim),
@@ -62,12 +62,13 @@ class OmniVisionConvNeXt(nn.Module):
         if self.prompt:
             prompt_cls = self.dec_prompt_mlp(prompt_input).view(B, -1, 1, 1)  # (B, C)
             feats_cls = feats_cls.view(B, -1, 1, 1)
+            # print(feats_cls.shape)
             feats_cls = feats_cls + prompt_cls
             # print("feats_cls shape after prompt:", feats_cls.shape)  # torch.Size([8, 768, 7, 7])
             feats_seg_with_prompt = []
             for i in range(len(feats_seg)):
                 prompt_seg = self.prompt_proj_layers[i](prompt_input).view(B, -1, 1, 1)  # (B, C_i, 1, 1)
-                print(feats_seg[i].shape, prompt_seg.shape, (feats_seg[i] + prompt_seg).shape)
+                # print(feats_seg[i].shape, prompt_seg.shape, (feats_seg[i] + prompt_seg).shape)
                 feats_seg_with_prompt.append(feats_seg[i] + prompt_seg)
         
             feats_seg = feats_seg_with_prompt

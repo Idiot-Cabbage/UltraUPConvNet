@@ -169,9 +169,9 @@ class FeaturePyramidNet(nn.Module):
     def __init__(self, fpn_dim=256):
         self.fpn_dim = fpn_dim
         super(FeaturePyramidNet, self).__init__()
-        self.fpn_in = nn.ModuleDict({'fpn_layer1': ConvBnAct(96 , self.fpn_dim, 1, 1, 0), 
-                                     "fpn_layer2": ConvBnAct(192 , self.fpn_dim, 1, 1, 0), 
-                                     "fpn_layer3": ConvBnAct(384, self.fpn_dim, 1, 1, 0), 
+        self.fpn_in = nn.ModuleDict({'fpn_layer1': ConvBnAct(128 , self.fpn_dim, 1, 1, 0), 
+                                     "fpn_layer2": ConvBnAct(256 , self.fpn_dim, 1, 1, 0), 
+                                     "fpn_layer3": ConvBnAct(512, self.fpn_dim, 1, 1, 0), 
                                     })
         self.fpn_out = nn.ModuleDict({'fpn_layer1': ConvBnAct(self.fpn_dim, self.fpn_dim, 3, 1, 1), 
                                       "fpn_layer2": ConvBnAct(self.fpn_dim, self.fpn_dim, 3, 1, 1), 
@@ -212,7 +212,7 @@ class UPerNet(nn.Module):
         #self.backbone = ResidualNet(in_channel, Bottleneck, layers)
         from .convnext import convnext_base, convnext_tiny
         self.backbone = convnext_tiny(pretrained=False, num_classes=1000)
-        self.ppm = PyramidPoolingModule(768, self.fpn_dim)
+        self.ppm = PyramidPoolingModule(1024, self.fpn_dim)
         self.fpn = FeaturePyramidNet(self.fpn_dim)
         self.fuse = ConvBnAct(fpn_dim*4, fpn_dim, 1, 1, 0)
         self.seg = nn.Sequential(ConvBnAct(fpn_dim, fpn_dim, 1, 1, 0), nn.Conv2d(fpn_dim, num_class, 1, 1, 0, bias=True))

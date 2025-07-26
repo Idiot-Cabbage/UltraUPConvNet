@@ -51,7 +51,7 @@ parser.add_argument('--use_pretrained_model', action='store_true', help='use pre
 # parser.add_argument('--pretrained_path', type=str,
 #                     default='/MICCAI/ours/pretrained_ckpt/convnext_base_22k_1k_224.pth', help='pretrained model path')
 parser.add_argument('--pretrained_path', type=str,
-                    default='/MICCAI/ours/pretrained_ckpt/convnext_tiny_22k_1k_224.pth', help='pretrained model path')
+                    default='/root/UUSIC25/pretrained_ckpt/convnext_base_22k_1k_224.pth', help='pretrained model path')
 
 parser.add_argument('--prompt', action='store_true', help='using prompt for training')
 parser.add_argument('--adapter_ft', action='store_true', help='using adapter for fine-tuning')
